@@ -4,242 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MQTT WebSocket Dashboard</title>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-
-    <style>
-      :root {
-        --primary: #2563eb;
-        --success: #16a34a;
-        --danger: #dc2626;
-        --bg: #f1f5f9;
-      }
-
-      body {
-        font-family: system-ui, sans-serif;
-        background: var(--bg);
-        margin: 0;
-        padding: 30px 15px;
-        display: flex;
-        justify-content: center;
-      }
-
-      /* ===== CONTAINER PANEL ===== */
-      .container {
-        width: 100%;
-        max-width: 800px;
-      }
-
-      /* ============================ */
-
-      h2 {
-        margin-top: 0;
-        text-align: center;
-      }
-
-      .card {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 15px;
-        overflow: hidden;
-      }
-
-      .card-header {
-        background: var(--primary);
-        color: #fff;
-        padding: 12px;
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      .card-content {
-        padding: 15px;
-        display: none;
-      }
-
-      .card-content.active {
-        display: block;
-      }
-
-      input,
-      select,
-      button {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-
-      button {
-        background: var(--primary);
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-      }
-
-      button:hover {
-        opacity: 0.9;
-      }
-
-      #status {
-        padding: 12px;
-        border-radius: 8px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        background: var(--danger);
-        color: #fff;
-        text-align: center;
-      }
-
-      #messages {
-        background: #111;
-        color: #0f0;
-        padding: 10px;
-        height: 180px;
-        overflow-y: auto;
-        font-family: monospace;
-        border-radius: 8px;
-        font-size: 14px;
-        white-space: pre-wrap;
-      }
-    </style>
+    <link rel="stylesheet" href="../main.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>MQTT WebSocket Dashboard</h2>
+    <h1>MQTT WebSocket Dashboard</h1>
 
-      <div id="status">Not Connected</div>
+    <div id="status">Not Connected</div>
 
-      <div class="card">
-        <div class="card-header">MQTT Config</div>
-        <div class="card-content active">
-          <select id="protocol">
-            <option value="wss">wss</option>
-            <option value="ws">ws</option>
-          </select>
-          <input id="broker" value="broker.emqx.io" />
-          <input id="port" value="8084" />
-          <input id="path" value="/mqtt" />
-          <button id="connectBtn">Connect</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">Subscribe</div>
-        <div class="card-content">
-          <input id="subtopic" placeholder="example/topic" />
-          <button id="subscribeBtn">Subscribe</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">Publish</div>
-        <div class="card-content">
-          <input id="pubtopic" placeholder="example/topic" />
-          <input id="message" placeholder="hello mqtt" />
-          <button id="publishBtn">Send</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">Messages</div>
-        <div class="card-content active">
-          <button id="clearBtn">Clear Messages</button>
-          <div id="messages">Waiting data...</div>
-        </div>
+    <div class="card">
+      <div class="card-header">MQTT Config</div>
+      <div class="card-content active">
+        <select id="protocol">
+          <option value="wss">wss</option>
+          <option value="ws">ws</option>
+        </select>
+        <input id="broker" value="broker.emqx.io" />
+        <input id="port" value="8084" />
+        <input id="path" value="/mqtt" />
+        <button id="connectBtn">Connect</button>
       </div>
     </div>
-    <!-- END CONTAINER -->
 
-    <script>
-      const $ = (id) => document.getElementById(id);
-      let client = null;
-      let connected = false;
+    <div class="card">
+      <div class="card-header">Subscribe</div>
+      <div class="card-content">
+        <input id="subtopic" placeholder="example/topic" />
+        <button id="subscribeBtn">Subscribe</button>
+      </div>
+    </div>
 
-      document.querySelectorAll(".card-header").forEach((header) => {
-        header.addEventListener("click", () => {
-          header.nextElementSibling.classList.toggle("active");
-        });
-      });
+    <div class="card">
+      <div class="card-header">Publish</div>
+      <div class="card-content">
+        <input id="pubtopic" placeholder="example/topic" />
+        <input id="message" placeholder="hello mqtt" />
+        <button id="publishBtn">Send</button>
+      </div>
+    </div>
 
-      const log = (text) => {
-        const msgBox = $("messages");
-        const time = new Date().toLocaleTimeString();
-        msgBox.textContent += `\n[${time}] ${text}`;
-        msgBox.scrollTop = msgBox.scrollHeight;
-      };
-
-      const setStatus = (text, type) => {
-        const status = $("status");
-        status.textContent = text;
-        status.style.background =
-          type === "success"
-            ? "var(--success)"
-            : type === "danger"
-              ? "var(--danger)"
-              : "var(--primary)";
-      };
-
-      $("clearBtn").addEventListener("click", () => {
-        $("messages").textContent = "";
-      });
-
-      $("connectBtn").addEventListener("click", () => {
-        const protocol = $("protocol").value;
-        const broker = $("broker").value;
-        const port = parseInt($("port").value);
-        const path = $("path").value;
-
-        const clientID = "web_" + Math.random().toString(16).substr(2, 8);
-
-        /* ===== SAFE FORMAT FOR PAHO ===== */
-        client = new Paho.MQTT.Client(broker, port, path, clientID);
-
-        client.onConnectionLost = () => {
-          connected = false;
-          setStatus("Connection Lost", "danger");
-          log("Connection lost");
-        };
-
-        client.onMessageArrived = (message) => {
-          log(`Topic: ${message.destinationName} | ${message.payloadString}`);
-        };
-
-        client.connect({
-          useSSL: protocol === "wss",
-          timeout: 5,
-          onSuccess: () => {
-            connected = true;
-            setStatus(`Connected to ${broker}`, "success");
-            log("Connected");
-          },
-          onFailure: (err) => {
-            setStatus("Connection Failed", "danger");
-            log("Failed: " + err.errorMessage);
-          },
-        });
-      });
-
-      $("subscribeBtn").addEventListener("click", () => {
-        if (!connected) return alert("Not connected");
-        const topic = $("subtopic").value;
-        client.subscribe(topic);
-        log("Subscribed: " + topic);
-      });
-
-      $("publishBtn").addEventListener("click", () => {
-        if (!connected) return alert("Not connected");
-        const topic = $("pubtopic").value;
-        const msg = $("message").value;
-        const message = new Paho.MQTT.Message(msg);
-        message.destinationName = topic;
-        client.send(message);
-        log("Sent: " + msg);
-      });
-    </script>
+    <div class="card">
+      <div class="card-header">Messages</div>
+      <div class="card-content active">
+        <button id="clearBtn">Clear Messages</button>
+        <div id="messages">Waiting data...</div>
+      </div>
+    </div>
+    <div class="wrapper">
+      <a href="../">Main Page</a>
+      <a href="" target="_blank">Repository on Github</a>
+    </div>
+    <script src="script.js"></script>
   </body>
 </html>
