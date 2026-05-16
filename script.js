@@ -42,7 +42,7 @@ $("connectBtn").addEventListener("click", () => {
 
   client.onConnectionLost = () => {
     connected = false;
-    setStatus("Connection Lost", "danger");
+    setStatus("CONNECTION LOST", "danger");
     log("Connection lost");
   };
 
@@ -55,11 +55,11 @@ $("connectBtn").addEventListener("click", () => {
     timeout: 5,
     onSuccess: () => {
       connected = true;
-      setStatus(`Connected to ${broker}`, "success");
+      setStatus(`CONNECTED TO: ${broker.toUpperCase()}`, "success");
       log("Connected");
     },
     onFailure: (err) => {
-      setStatus("Connection Failed", "danger");
+      setStatus("CONNECTION FAILED", "danger");
       log("Failed: " + err.errorMessage);
     },
   });

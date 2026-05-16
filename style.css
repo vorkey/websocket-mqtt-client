@@ -30,10 +30,16 @@
 input,
 select,
 button {
+  font-size: 0.9rem;
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
+}
+
+label {
+  font-size: 0.9rem;
+  color: #444;
 }
 
 button {
@@ -54,9 +60,10 @@ button {
   background: #111;
   color: #0f0;
   padding: 8px;
-  height: 240px;
+  height: 16rem;
   overflow-y: auto;
   font-family: monospace;
   font-size: 14px;
   white-space: pre-wrap;
+  margin-bottom: 1rem;
 }

@@ -5,54 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MQTT WebSocket Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <link rel="stylesheet" href="../main.css" />
+    <link rel="stylesheet" href="https://vorkey.github.io/main.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>MQTT WebSocket Dashboard</h1>
+    <h1>MQTT WebSocket Client</h1>
 
-    <div id="status">Not Connected</div>
+    <div id="status">NOT CONNECTED</div>
 
     <div class="card">
       <div class="card-header">MQTT Config</div>
       <div class="card-content active">
+        <label for="protocol">Protocol</label>
         <select id="protocol">
-          <option value="wss">wss</option>
-          <option value="ws">ws</option>
+          <option value="wss">WSS (Secure WebSocket)</option>
+          <option value="ws">WebSocket</option>
         </select>
+        <label for="broker">Broker URL</label>
         <input id="broker" value="broker.emqx.io" />
+        <label for="port">Port</label>
         <input id="port" value="8084" />
+        <label for="path">Path</label>
         <input id="path" value="/mqtt" />
-        <button id="connectBtn">Connect</button>
+        <button id="connectBtn">CONNECT</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">Subscribe</div>
       <div class="card-content">
+        <label for="subtopic">Subscribe Topic</label>
         <input id="subtopic" placeholder="example/topic" />
-        <button id="subscribeBtn">Subscribe</button>
+        <button id="subscribeBtn">SUBSCRIBE</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">Publish</div>
       <div class="card-content">
+        <label for="pubtopic">Publish Topic</label>
         <input id="pubtopic" placeholder="example/topic" />
+        <label for="message">Message</label>
         <input id="message" placeholder="hello mqtt" />
-        <button id="publishBtn">Send</button>
+        <button id="publishBtn">SEND</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">Messages</div>
       <div class="card-content active">
-        <button id="clearBtn">Clear Messages</button>
         <div id="messages">Waiting data...</div>
+        <button id="clearBtn">CLEAR MESSAGES</button>
       </div>
     </div>
     <div class="wrapper">
-      <a href="../">Main Page</a>
+      <a href="https://vorkey.github.io">Main Page</a>
       <a href="https://github.com/vorkey/websocket-mqtt-client" target="_blank">Repository on Github</a>
     </div>
     <script src="script.js"></script>
